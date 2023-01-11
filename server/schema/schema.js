@@ -1,7 +1,6 @@
 const Project = require('../models/Project');
 const Client = require('../models/Client');
 
-
 const {
     GraphQLObjectType,
     GraphQLID,
@@ -62,7 +61,7 @@ const RootQuery = new GraphQLObjectType({
                 return Client.find();
             },
         },
-            client: {
+        client: {
             type: ClientType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) {
@@ -76,39 +75,39 @@ const RootQuery = new GraphQLObjectType({
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-    // Add a client
-    addClient: {
-        type: ClientType,
-        args: {
-            name: { type: GraphQLNonNull(GraphQLString) },
-            email: { type: GraphQLNonNull(GraphQLString) },
-            phone: { type: GraphQLNonNull(GraphQLString) },
-        },
-        resolve(parent, args) {
-            const client = new Client({
-            name: args.name,
-            email: args.email,
-            phone: args.phone,
-            });
+        // Add a client
+        addClient: {
+            type: ClientType,
+            args: {
+                name: { type: GraphQLNonNull(GraphQLString) },
+                email: { type: GraphQLNonNull(GraphQLString) },
+                phone: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve(parent, args) {
+                const client = new Client({
+                name: args.name,
+                email: args.email,
+                phone: args.phone,
+                });
 
-            return client.save();
-        },
+                return client.save();
+            },
         },
         // Delete a client
         deleteClient: {
-        type: ClientType,
-        args: {
-            id: { type: GraphQLNonNull(GraphQLID) },
-        },
-        resolve(parent, args) {
-            Project.find({ clientId: args.id }).then((projects) => {
-            projects.forEach((project) => {
-                project.remove();
-            });
-            });
+            type: ClientType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                Project.find({ clientId: args.id }).then((projects) => {
+                projects.forEach((project) => {
+                    project.remove();
+                });
+                });
 
-            return Client.findByIdAndRemove(args.id);
-        },
+                return Client.findByIdAndRemove(args.id);
+            },
         },
         // Add a project
         addProject: {
@@ -117,14 +116,14 @@ const mutation = new GraphQLObjectType({
                 name: { type: GraphQLNonNull(GraphQLString) },
                 description: { type: GraphQLNonNull(GraphQLString) },
                 status: {
-                type: new GraphQLEnumType({
-                    name: 'ProjectStatus',
-                    values: {
-                    new: { value: 'Not Started' },
-                    progress: { value: 'In Progress' },
-                    completed: { value: 'Completed' },
-                    },
-                }),
+                    type: new GraphQLEnumType({
+                        name: 'ProjectStatus',
+                        values: {
+                        new: { value: 'Not Started' },
+                        progress: { value: 'In Progress' },
+                        completed: { value: 'Completed' },
+                        },
+                    }),
                 defaultValue: 'Not Started',
                 },
                 clientId: { type: GraphQLNonNull(GraphQLID) },
@@ -158,27 +157,27 @@ const mutation = new GraphQLObjectType({
                 name: { type: GraphQLString },
                 description: { type: GraphQLString },
                 status: {
-                    type: new GraphQLEnumType({
-                        name: 'ProjectStatusUpdate',
-                        values: {
-                            new: { value: 'Not Started' },
-                            progress: { value: 'In Progress' },
-                            completed: { value: 'Completed' },
-                        },
-                    }),
+                type: new GraphQLEnumType({
+                    name: 'ProjectStatusUpdate',
+                    values: {
+                    new: { value: 'Not Started' },
+                    progress: { value: 'In Progress' },
+                    completed: { value: 'Completed' },
+                    },
+                }),
                 },
             },
             resolve(parent, args) {
                 return Project.findByIdAndUpdate(
-                    args.id,
-                    {
-                        $set: {
+                args.id,
+                {
+                    $set: {
                         name: args.name,
                         description: args.description,
                         status: args.status,
-                        },
                     },
-                    { new: true }
+                },
+                { new: true }
                 );
             },
         },
